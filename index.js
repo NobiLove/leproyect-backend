@@ -32,11 +32,11 @@ const start = async () => {
     {
       schema,
       execute,
-      subscribe,
+      subscribe
     },
     {
       server: httpServer,
-      path: '',
+      path: ''
     }
   )
   const server = new ApolloServer({
@@ -52,22 +52,22 @@ const start = async () => {
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       {
-        async serverWillStart() {
+        async serverWillStart () {
           return {
-            async drainServer() {
+            async drainServer () {
               subscriptionServer.close()
-            },
+            }
           }
-        },
-      },
-    ],
+        }
+      }
+    ]
   })
 
   await server.start()
 
   server.applyMiddleware({
     app,
-    path: '/',
+    path: '/'
   })
 
   const PORT = config.PORT

@@ -15,23 +15,23 @@ const resolvers = {
     allBooks: async (root, args, context) => {
       const currentUser = context.currentUser
       if (!currentUser) {
-        throw new AuthenticationError("not authenticated")
+        throw new AuthenticationError('not authenticated')
       }
       const author = await Author.findOne({ name: args.name })
       let opts = {}
       if (args.name) { opts = { ...opts, author: author.id } }
       if (args.genres) { opts = { ...opts, genres: args.genres } }
-      return await Book.find(opts).populate("author")
+      return await Book.find(opts).populate('author')
     },
     allAuthors: async (root, args, context) => {
       const currentUser = context.currentUser
       if (!currentUser) {
-        throw new AuthenticationError("not authenticated")
+        throw new AuthenticationError('not authenticated')
       }
       return await Author.find({})
     },
     findAuthorByName: async (root, args, context) => await Author.findOne({ name: args.name }),
-    findBookByTitle: async (root, args, context) => await Book.findOne({ title: args.title }).populate("author"),
+    findBookByTitle: async (root, args, context) => await Book.findOne({ title: args.title }).populate('author'),
     me: (root, args, context) => {
       return context.currentUser
     }
@@ -48,7 +48,7 @@ const resolvers = {
     addBook: async (root, args, context) => {
       const currentUser = context.currentUser
       if (!currentUser) {
-        throw new AuthenticationError("not authenticated")
+        throw new AuthenticationError('not authenticated')
       }
       const authorInDb = await Author.findOne({ name: args.author })
       const libro = { ...args }
@@ -67,17 +67,17 @@ const resolvers = {
         await book.save()
       } catch (error) {
         throw new UserInputError(error.message, {
-          invalidArgs: args,
+          invalidArgs: args
         })
       }
-      const returnedBook = book.populate("author")
+      const returnedBook = book.populate('author')
       pubsub.publish('BOOK_ADDED', { bookAdded: returnedBook })
       return returnedBook
     },
     editAuthor: async (root, args, context) => {
       const currentUser = context.currentUser
       if (!currentUser) {
-        throw new AuthenticationError("not authenticated")
+        throw new AuthenticationError('not authenticated')
       }
 
       const author = await Author.findOne({ name: args.name })
@@ -86,7 +86,7 @@ const resolvers = {
         await author.save()
       } catch (error) {
         throw new UserInputError(error.message, {
-          invalidArgs: args,
+          invalidArgs: args
         })
       }
       return author
@@ -97,14 +97,14 @@ const resolvers = {
       return user.save()
         .catch(error => {
           throw new UserInputError(error.message, {
-            invalidArgs: args,
+            invalidArgs: args
           })
         })
     },
     login: async (root, args, context) => {
       const user = await User.findOne({ username: args.username })
       if (!user || args.password !== 'secred') {
-        throw new UserInputError("wrong credentials")
+        throw new UserInputError('wrong credentials')
       }
 
       const userForToken = {
@@ -114,13 +114,13 @@ const resolvers = {
       }
 
       return { value: jwt.sign(userForToken, JWT_SECRET) }
-    },
+    }
   },
   Subscription: {
     bookAdded: {
       subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
-    },
-  },
+    }
+  }
 }
 
 module.exports = {
