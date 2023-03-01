@@ -23,6 +23,7 @@ mongoose.connect(config.MONGODB_URI)
   .catch((error) => {
     console.log('Error connection to MongoDB:', error.message)
   })
+  
 const start = async () => {
   const app = express()
   const httpServer = http.createServer(app)
